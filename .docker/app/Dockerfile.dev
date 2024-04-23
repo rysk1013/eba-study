@@ -1,0 +1,14 @@
+FROM golang:1.22.1-alpine
+
+RUN apk update && \
+    apk add --no-cache git
+
+# watchexec のインストール
+RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing watchexec
+
+WORKDIR /go/src/app
+
+COPY ./app .
+
+# watchexecでホットリロード用のコマンドを設定
+CMD ["watchexec", "-w", ".", "--force-poll", "100", "-r", "go", "run", "main.go"]

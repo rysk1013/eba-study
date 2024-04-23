@@ -1,0 +1,5 @@
+# log file
+nginx/*.log
+
+# temp folder
+temp/
