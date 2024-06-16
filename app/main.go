@@ -21,6 +21,11 @@ func init() {
 }
 
 func main() {
+	/*
+		@TODO
+		何かおかしい.
+		リクエストのたびにmainが実行されて変数の初期化がされる.
+	*/
 	e := echo.New()
 
 	logfile, ok := os.LookupEnv("GOLANG_LOG_FILE")
@@ -91,6 +96,12 @@ func index(c echo.Context) error {
 
 	url := BaseUrl + "/api/site"
 
+	/*
+		@TODO
+		(c.Echo()).GET()
+
+		いったん標準ライブラリで実装したがecho側で代替の機能が準備されている.
+	*/
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		logger := c.Logger()
