@@ -5,24 +5,19 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
 )
-
-// ログ出力先
-const logfile string = "log/golang.log"
-
-// ログ出力設定の読み込み
-func init() {
-	utils.LoggingSettings(logfile)
-}
 
 func main() {
 	e := echo.New()
 
-	// e.Use(middleware.Logger())
+	logfile, ok := os.LookupEnv("GOLANG_LOG_FILE")
+	if !ok {
+		panic("GOLANG_LOG_FILE is not set")
+	}
 
 	fp, err := utils.GetFilePointer(logfile)
 	if err != nil {
@@ -35,9 +30,9 @@ func main() {
 	}))
 
 	e.Logger.SetOutput(fp)
-	e.Logger.SetLevel(log.DEBUG)
-	// e.Logger.Info("cccccc")
-	// e.Logger.Debug("bbbbb")
+
+	loglevel, _ := os.LookupEnv("GOLANG_LOG_LEVEL")
+	e.Logger.SetLevel(utils.GetLEVEL(loglevel))
 
 	initRouting(e)
 	e.Logger.Fatal(e.Start(":1323"))
