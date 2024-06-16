@@ -15,3 +15,7 @@ func LoggingSettings(logFile string) {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 	log.SetOutput(multiLogFile)
 }
+
+func GetFilePointer(path string) (*os.File, error) {
+	return os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+}

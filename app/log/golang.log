@@ -1,1 +1,86 @@
-2024/04/06 08:29:45 main.go:22: test
+{"time":"2024-06-16T05:46:41.125404873Z","level":"INFO","prefix":"echo","file":"main.go","line":"39","message":"cccccc"}
+{"time":"2024-06-16T05:46:41.125650656Z","level":"DEBUG","prefix":"echo","file":"main.go","line":"40","message":"bbbbb"}
+{"time":"2024-06-16T05:46:42.015988701Z","level":"INFO","prefix":"echo","file":"main.go","line":"39","message":"cccccc"}
+{"time":"2024-06-16T05:46:42.016225437Z","level":"DEBUG","prefix":"echo","file":"main.go","line":"40","message":"bbbbb"}
+{"time":"2024-06-16T05:46:42.898346637Z","level":"INFO","prefix":"echo","file":"main.go","line":"39","message":"cccccc"}
+{"time":"2024-06-16T05:46:42.898589866Z","level":"DEBUG","prefix":"echo","file":"main.go","line":"40","message":"bbbbb"}
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
+
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.11.4
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:1323
