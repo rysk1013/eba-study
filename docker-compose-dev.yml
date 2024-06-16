@@ -10,6 +10,7 @@ services:
     tty: true
     ports:
       - 1323
+    env_file: .docker/.env
 
   web:
     container_name: nginx
