@@ -14,7 +14,7 @@ import (
 )
 
 var BaseUrl string
-var SiteData site_data
+var CacheRecord SiteData
 
 func init() {
 	BaseUrl, _ = os.LookupEnv("GOLANG_BACKEND_BASE_URL")
@@ -27,6 +27,8 @@ func main() {
 		リクエストのたびにmainが実行されて変数の初期化がされる.
 	*/
 	e := echo.New()
+
+	e.Static("/static", "assets")
 
 	logfile, ok := os.LookupEnv("GOLANG_LOG_FILE")
 	if !ok {
@@ -48,8 +50,6 @@ func main() {
 	loglevel, _ := os.LookupEnv("GOLANG_LOG_LEVEL")
 	e.Logger.SetLevel(utils.GetLEVEL(loglevel))
 
-	e.Logger.Info("## Begin ##")
-
 	initRouting(e)
 	e.Logger.Fatal(e.Start(":1323"))
 }
@@ -60,6 +60,15 @@ type Template struct {
 
 func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	return t.templates.ExecuteTemplate(w, name, data)
+}
+
+type SiteContent struct {
+	Title       string
+	PageContent PageContent
+}
+
+type PageContent struct {
+	Accounts []Account
 }
 
 func initRouting(e *echo.Echo) {
@@ -74,16 +83,16 @@ func initTemplate(e *echo.Echo) {
 	e.Renderer = t
 }
 
-type site_response struct {
-	SiteData site_data `json:"data"`
+type SiteResponse struct {
+	SiteData SiteData `json:"data"`
 }
 
-type site_data struct {
+type SiteData struct {
 	ExpireDatetime string    `json:"expire_datetime"`
-	Accounts       []account `json:"accounts"`
+	Accounts       []Account `json:"accounts"`
 }
 
-type account struct {
+type Account struct {
 	AccountId    int64  `json:"id"`
 	RegisterName string `json:"registerName"`
 	DisplayName  string `json:"displayName"`
@@ -92,7 +101,7 @@ type account struct {
 
 func index(c echo.Context) error {
 
-	(c.Logger()).Info(SiteData)
+	(c.Logger()).Info(CacheRecord)
 
 	url := BaseUrl + "/api/site"
 
@@ -126,7 +135,7 @@ func index(c echo.Context) error {
 
 	byteArray, _ := io.ReadAll(resp.Body)
 
-	var data site_response
+	var data SiteResponse
 
 	if err := json.Unmarshal(byteArray, &data); err != nil {
 		logger := c.Logger()
@@ -138,7 +147,14 @@ func index(c echo.Context) error {
 
 	(c.Logger()).Info(data.SiteData)
 
-	SiteData = data.SiteData
+	CacheRecord = data.SiteData
 
-	return c.Render(http.StatusOK, "index", "お勉強同好会")
+	content := SiteContent{
+		Title: "お勉強同好会メンバー一覧",
+		PageContent: PageContent{
+			Accounts: CacheRecord.Accounts,
+		},
+	}
+
+	return c.Render(http.StatusOK, "index", content)
 }
