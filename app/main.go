@@ -2,6 +2,7 @@ package main
 
 import (
 	"eba-study/utils"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -13,6 +14,7 @@ import (
 )
 
 var BaseUrl string
+var SiteData site_data
 
 func init() {
 	BaseUrl, _ = os.LookupEnv("GOLANG_BACKEND_BASE_URL")
@@ -41,6 +43,8 @@ func main() {
 	loglevel, _ := os.LookupEnv("GOLANG_LOG_LEVEL")
 	e.Logger.SetLevel(utils.GetLEVEL(loglevel))
 
+	e.Logger.Info("## Begin ##")
+
 	initRouting(e)
 	e.Logger.Fatal(e.Start(":1323"))
 }
@@ -65,16 +69,27 @@ func initTemplate(e *echo.Echo) {
 	e.Renderer = t
 }
 
+type site_response struct {
+	SiteData site_data `json:"data"`
+}
+
+type site_data struct {
+	ExpireDatetime string    `json:"expire_datetime"`
+	Accounts       []account `json:"accounts"`
+}
+
+type account struct {
+	AccountId    int64  `json:"id"`
+	RegisterName string `json:"registerName"`
+	DisplayName  string `json:"displayName"`
+	Class        string `json:"class"`
+}
+
 func index(c echo.Context) error {
 
-	url := BaseUrl + "/api/account"
+	(c.Logger()).Info(SiteData)
 
-	// req, err := http.NewRequest("GET", url, nil)
-	// if err != nil {
-	// 	return err
-	// }
-
-	url = "https://api.open-meteo.com/v1/forecast?latitude=35.6785&longitude=139.6823&hourly=temperature_2m&timezone=Asia%2FTokyo"
+	url := BaseUrl + "/api/site"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -100,7 +115,19 @@ func index(c echo.Context) error {
 
 	byteArray, _ := io.ReadAll(resp.Body)
 
-	(c.Logger()).Info(string(byteArray))
+	var data site_response
+
+	if err := json.Unmarshal(byteArray, &data); err != nil {
+		logger := c.Logger()
+		mes := fmt.Sprintf("Error: %s", err)
+		logger.Error(mes)
+
+		return err
+	}
+
+	(c.Logger()).Info(data.SiteData)
+
+	SiteData = data.SiteData
 
 	return c.Render(http.StatusOK, "index", "お勉強同好会")
 }
