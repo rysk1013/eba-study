@@ -31,4 +31,4 @@ services:
       - '3443:443'
     environment:
       STAGE: local
-      DOMAINS: 'localhost -> http://host.docker.internal:80'
+      DOMAINS: 'localhost -> http://web:80'
