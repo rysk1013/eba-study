@@ -2,6 +2,7 @@ package main
 
 import (
 	"eba-study/utils"
+	"fmt"
 	"html/template"
 	"io"
 	"net/http"
@@ -10,6 +11,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
+
+var BaseUrl string
+
+func init() {
+	BaseUrl, _ = os.LookupEnv("GOLANG_BACKEND_BASE_URL")
+}
 
 func main() {
 	e := echo.New()
@@ -59,5 +66,41 @@ func initTemplate(e *echo.Echo) {
 }
 
 func index(c echo.Context) error {
+
+	url := BaseUrl + "/api/account"
+
+	// req, err := http.NewRequest("GET", url, nil)
+	// if err != nil {
+	// 	return err
+	// }
+
+	url = "https://api.open-meteo.com/v1/forecast?latitude=35.6785&longitude=139.6823&hourly=temperature_2m&timezone=Asia%2FTokyo"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		logger := c.Logger()
+		mes := fmt.Sprintf("Error: %s", err)
+		logger.Error(mes)
+
+		return err
+	}
+
+	client := new(http.Client)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		logger := c.Logger()
+		mes := fmt.Sprintf("Error: %s", err)
+		logger.Error(mes)
+
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	byteArray, _ := io.ReadAll(resp.Body)
+
+	(c.Logger()).Info(string(byteArray))
+
 	return c.Render(http.StatusOK, "index", "お勉強同好会")
 }
