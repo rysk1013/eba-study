@@ -8,7 +8,13 @@
         <meta name=”robots” content=”noindex , nofollow”>
         <title>{{ .Title }}</title>
         <style>
+            @font-face {
+                font-family: "Chalk-JP";
+                src: url("static/font/Chalk-JP.otf");
+            }
             html {
+                font-family: "Chalk-JP";
+                font-size: 62.5%;
                 color: white;
                 height: 100vh;
             }
@@ -17,12 +23,15 @@
                 margin: 0;
             }
             .wrapper {
-                background-image: url("static/img/test.jpg");
+                background-image: url("static/img/school-blackboard.jpg");
+                background-position: center;
+                background-size: cover;
+                background-repeat: no-repeat;
+                font-size: 3.0rem;
+                line-height: 1.6;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
-                background-size: cover;
-                background-repeat: no-repeat;
             }
             .content {
                 margin: 0 calc(100vw / 5);
