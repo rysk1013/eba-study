@@ -94,14 +94,33 @@ type SiteData struct {
 
 type Account struct {
 	AccountId    int64  `json:"id"`
-	RegisterName string `json:"registerName"`
-	DisplayName  string `json:"displayName"`
+	RegisterName string `json:"register_name"`
+	DisplayName  string `json:"display_name"`
 	Class        string `json:"class"`
+	DisplayClass string `json:"display_class"`
+}
+
+func (ac Account) GetInlineStyle() string {
+	/*
+	 * @TODO
+	 * 表示の定義はjsonフォーマットで外部ファイルに切り出す.
+	 * プロセス起動時にメモリ上に配置して使用する.
+	 */
+	switch ac.DisplayClass {
+	case "01":
+		return "first"
+	case "02":
+		return "second"
+	default:
+		return ""
+	}
 }
 
 func index(c echo.Context) error {
 
-	(c.Logger()).Info(CacheRecord)
+	e := c.Echo()
+
+	e.Logger.Info(CacheRecord)
 
 	url := BaseUrl + "/api/site"
 
@@ -113,9 +132,8 @@ func index(c echo.Context) error {
 	*/
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		logger := c.Logger()
-		mes := fmt.Sprintf("Error: %s", err)
-		logger.Error(mes)
+
+		e.Logger.Error(fmt.Sprintf("Error: %s", err))
 
 		return err
 	}
@@ -124,9 +142,8 @@ func index(c echo.Context) error {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		logger := c.Logger()
-		mes := fmt.Sprintf("Error: %s", err)
-		logger.Error(mes)
+
+		e.Logger.Error(fmt.Sprintf("Error: %s", err))
 
 		return err
 	}
@@ -145,9 +162,15 @@ func index(c echo.Context) error {
 		return err
 	}
 
-	(c.Logger()).Info(data.SiteData)
+	e.Logger.Info(data.SiteData)
 
 	CacheRecord = data.SiteData
+
+	/*
+		for _, v := range data.SiteData.Accounts {
+			e.Logger.Info(v)
+		}
+	*/
 
 	content := SiteContent{
 		Title: "お勉強同好会メンバー一覧",
