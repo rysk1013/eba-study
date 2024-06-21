@@ -7,4 +7,5 @@ WORKDIR /go/src/app
 
 COPY ./app .
 
+# @TODO 実行ファイルを生成して実行したい
 CMD ["go", "run", "main.go"]

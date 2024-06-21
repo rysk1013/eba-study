@@ -12,3 +12,5 @@ COPY ./app .
 
 # watchexecでホットリロード用のコマンドを設定
 CMD ["watchexec", "-w", ".", "--force-poll", "100", "-r", "go", "run", "main.go"]
+# ホットリロードを使用しない設定
+# CMD ["go", "run", "main.go"]

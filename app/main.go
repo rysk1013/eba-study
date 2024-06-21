@@ -4,12 +4,14 @@ import (
 	"context"
 	"eba-study/utils"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -17,7 +19,14 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+/*
+ * @TODO
+ * 処理がまとまりすぎているので後でリファクタ.
+ */
+
 var BaseUrl string
+var RetryLimitThreshold int
+var CacheRecordLock bool
 var CacheRecord SiteData
 var DisplayClass DisplayClassData
 
@@ -30,6 +39,16 @@ type DisplayClassData struct {
 
 func init() {
 	BaseUrl, _ = os.LookupEnv("GOLANG_BACKEND_BASE_URL")
+	account_data_retry_limit_threshold, _ := os.LookupEnv("GOLANG_ACCOUNT_DATA_RETRY_LIMIT_THRESHOLD")
+
+	var err error
+
+	RetryLimitThreshold, err = strconv.Atoi(account_data_retry_limit_threshold)
+	if err != nil {
+		panic("GOLANG_ACCOUNT_DATA_RETRY_LIMIT_THRESHOLD is not set.")
+	}
+
+	CacheRecordLock = false
 
 	f, err := os.Open("display_class.json")
 	if err != nil {
@@ -51,7 +70,7 @@ func main() {
 
 	logfile, ok := os.LookupEnv("GOLANG_LOG_FILE")
 	if !ok {
-		panic("GOLANG_LOG_FILE is not set")
+		panic("GOLANG_LOG_FILE is not set.")
 	}
 
 	fp, err := utils.GetFilePointer(logfile)
@@ -71,11 +90,11 @@ func main() {
 
 	initRouting(e)
 
-	func() {
+	go func() {
 		if err := e.Start(":1323"); err != nil {
 
 			e.Logger.Info(err)
-			e.Logger.Info("shutting down the server")
+			e.Logger.Info("shutting down the server.")
 		}
 	}()
 
@@ -84,7 +103,7 @@ func main() {
 
 	<-quit
 
-	e.Logger.Info("graceful shutting down the server")
+	e.Logger.Info("graceful shutting down the server.")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
@@ -167,28 +186,63 @@ func index(c echo.Context) error {
 
 	e := c.Echo()
 
-	var t = CacheRecord.ExpireDatetime
+	t := CacheRecord.ExpireDatetime
 	expireTime, _ := time.Parse("20060102150405", t)
 
 	if expireTime.Before(time.Now()) {
 
-		var data SiteResponse
+		retry := RetryLimitThreshold
 
-		if err := InvokeApi(&data); err != nil {
+		for retry > 0 {
 
-			e.Logger.Error(fmt.Sprintf("Error: %s", err))
+			if CacheRecordLock {
+
+				retry--
+
+				if retry != 0 {
+
+					time.Sleep(1 * time.Second)
+				}
+
+				continue
+			}
+
+			CacheRecordLock = true
+
+			var data SiteResponse
+
+			if err := InvokeApi(&data); err != nil {
+
+				CacheRecordLock = false
+
+				e.Logger.Error(fmt.Sprintf("Error: %s", err))
+
+				return err
+			}
+
+			CacheRecord = data.SiteData
+
+			CacheRecordLock = false
+		}
+
+		t := CacheRecord.ExpireDatetime
+		expireTime, _ := time.Parse("20060102150405", t)
+
+		if expireTime.Before(time.Now()) {
+			/**
+			 * @TODO
+			 * データ更新失敗時に1日1回アラートメールを送信してもいい.
+			 *
+			 * @TODO
+			 * 更新に失敗した場合に古いデータが残っているなら古いデータで処理を継続することを検討してもいい.
+			 */
+			err := errors.New(fmt.Sprintf("Error: %s", "CacheRecord update failed."))
+
+			e.Logger.Error(err)
 
 			return err
 		}
-
-		CacheRecord = data.SiteData
 	}
-
-	/*
-		for _, v := range data.SiteData.Accounts {
-			e.Logger.Info(v)
-		}
-	*/
 
 	content := SiteContent{
 		Title: "お勉強同好会メンバー一覧",

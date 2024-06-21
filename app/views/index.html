@@ -9,6 +9,8 @@
         <link rel="icon" href="static/img/favicon.ico">
         <title>{{ .Title }}</title>
         <style>
+            /* @TODO リファクタ */
+            /* @TODO レスポンシブ */
             @font-face {
                 font-family: 'icon-mastache';
                 src: url('static/font/icon-mastache.eot?ha4iqi');
@@ -50,22 +52,21 @@
                 font-family: "Chalk-JP";
                 font-size: 62.5%;
                 color: white;
-                height: 100vh;
             }
             body {
-                height: 100%;
-                margin: 0;
-            }
-            .wrapper {
                 background-image: url("static/img/school-blackboard.jpg");
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
+                min-height: 100vh;
+                margin: 0;
+            }
+            .wrapper {
                 font-size: 3.0rem;
                 line-height: 1.6;
-                height: 100%;
                 display: flex;
                 flex-direction: column;
+                padding-bottom: 8rem;
             }
             .content {
                 margin: 0 calc(100vw / 5);
