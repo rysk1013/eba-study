@@ -1,0 +1,107 @@
+# @TODO 768px~960pxあたりで、ややデザイン崩れあり
+set $forbidden_page '<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name=”robots” content=”noindex , nofollow”>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"></link>
+        <style>
+            body {
+                background: none;
+                margin: 0;
+            }
+            .wrapper {
+                height: 100vh;
+                background-color: #2F3242;
+            }
+            .image-block {
+                height: 100vh;
+                position: absolute;
+                inset: 0;
+                z-index: 0;
+            }
+            .message-block {
+                height: 100vh;
+                font-family: roboto;
+                font-weight: 300;
+                color: #FFF;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding-left: 4vw;
+                position: relative;
+                z-index: 1;
+            }
+            .message-block > p {
+                margin: 0;
+                word-break: break-all;
+            }
+            .message-block-status {
+                font-size: 16vw;
+                padding-bottom: 1.2vw;
+            }
+            .message-block-reason {
+                font-size: 5.6vw;
+                padding-bottom: 1vw;
+            }
+            .message-block-guidance {
+                font-size: 3.5vw;
+                text-decoration: underline;
+                padding-bottom: 8vw;
+            }
+            .circle {
+                fill: transparent;
+                stroke-width: 1;
+            }
+
+            @media only screen and (min-width:768px) {
+                .wrapper {
+                    display: flex;
+                }
+                .image-block {
+                    flex-basis: 50%;
+                    position: relative;
+                }
+                .image-block > svg {
+                    height: 99%;
+                }
+                .message-block {
+                    flex-basis: 50%;
+                    z-index: 0;
+                }
+                .message-block-status {
+                    font-size: 4vw;
+                }
+                .message-block-reason {
+                    font-size: 1.4vw;
+                }
+                .message-block-guidance {
+                    font-size: 1.0vw;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <div class="wrapper">
+                <div class="image-block">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="circle" cx="189" cy="40" r="10" stroke="#007FB2"></circle>
+                        <circle class="circle" cx="90" cy="55" r="50" stroke="#EF4A5B"></circle>
+                        <circle class="circle" cx="31" cy="120" r="30" stroke="#795D9C"></circle>
+                        <circle class="circle" cx="165" cy="135" r="25" stroke="#F2773F"></circle>
+                        <circle class="circle" cx="90" cy="160" r="20" stroke="#36B455"></circle>
+                    </svg>
+                </div>
+                <div class="message-block">
+                    <p class="message-block-status">403</p>
+                    <p class="message-block-reason">Forbidden</p>
+                    <p class="message-block-guidance"><a href="https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3">https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3</a></p>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>'
+;
