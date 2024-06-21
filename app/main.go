@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"eba-study/utils"
 	"encoding/json"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -70,10 +73,30 @@ func main() {
 
 	func() {
 		if err := e.Start(":1323"); err != nil {
+
 			e.Logger.Info(err)
 			e.Logger.Info("shutting down the server")
 		}
 	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	<-quit
+
+	e.Logger.Info("graceful shutting down the server")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	if err := e.Shutdown(ctx); err != nil {
+
+		e.Logger.Info(err)
+		e.Close()
+	}
+
+	time.Sleep(1 * time.Second)
 }
 
 type Template struct {
