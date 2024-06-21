@@ -9,6 +9,10 @@ events {
 }
 
 http {
+
+  proxy_cache_path /var/cache/nginx keys_zone=cache-zone:1m levels=2:2 max_size=1g inactive=12h;
+  proxy_temp_path  /var/cache/nginx/cache;
+
   server {
 
     listen 80 default_server;
@@ -27,6 +31,8 @@ http {
       if ($invalid_referer) {
         # add_header Content-Type text/html;
 
+        add_header Cache-Control "s-maxage=3" always;
+
         include /etc/nginx/define_params;
 
         return 403 $forbidden_page;
@@ -34,6 +40,14 @@ http {
 
       proxy_pass http://app:1323;
       proxy_set_header Host $http_host;
+
+      proxy_cache cache-zone;
+      proxy_ignore_headers X-Accel-Redirect X-Accel-Expires Cache-Control Expires Vary Set-Cookie;
+      proxy_cache_key $host$uri$is_args$args;
+
+      proxy_cache_valid 200 403;
+
+      add_header X-Cache-Status $upstream_cache_status;
     }
   }
 
