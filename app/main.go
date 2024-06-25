@@ -26,6 +26,7 @@ import (
 
 var BaseUrl string
 var RetryLimitThreshold int
+var IsUseDummyAccount bool
 var CacheRecordLock bool
 var CacheRecord SiteData
 var DisplayClass DisplayClassData
@@ -38,6 +39,7 @@ type DisplayClassData struct {
 }
 
 func init() {
+
 	BaseUrl, _ = os.LookupEnv("GOLANG_BACKEND_BASE_URL")
 	account_data_retry_limit_threshold, _ := os.LookupEnv("GOLANG_ACCOUNT_DATA_RETRY_LIMIT_THRESHOLD")
 
@@ -47,6 +49,14 @@ func init() {
 	if err != nil {
 		panic("GOLANG_ACCOUNT_DATA_RETRY_LIMIT_THRESHOLD is not set.")
 	}
+
+	is_use_dummy_account, isOk := os.LookupEnv("GOLANG_USE_DUMMY_ACCOUNTS_DATA")
+
+	if !isOk {
+		is_use_dummy_account = "0"
+	}
+
+	IsUseDummyAccount = is_use_dummy_account == "1"
 
 	CacheRecordLock = false
 
@@ -98,7 +108,7 @@ func main() {
 		}
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
@@ -177,6 +187,12 @@ func (ac Account) GetInlineStyle() string {
 		return DisplayClass.DC01
 	case "02":
 		return DisplayClass.DC02
+	case "D1":
+		return "dummy first"
+	case "D2":
+		return "dummy second"
+	case "D3":
+		return "dummy third"
 	default:
 		return ""
 	}
@@ -191,9 +207,40 @@ func index(c echo.Context) error {
 
 	if expireTime.Before(time.Now()) {
 
+		var data SiteResponse
+
 		retry := RetryLimitThreshold
 
 		for retry > 0 {
+
+			if IsUseDummyAccount {
+
+				raw, err := os.ReadFile("./dummy_accounts.json")
+				if err != nil {
+
+					e.Logger.Error(fmt.Sprintf("Error: %s", err))
+
+					retry--
+
+					continue
+				}
+
+				if err := json.Unmarshal(raw, &data); err != nil {
+
+					e.Logger.Error(fmt.Sprintf("Error: %s", err))
+
+					retry--
+
+					continue
+				}
+
+				sixHour := 6 * time.Hour
+				data.SiteData.ExpireDatetime = time.Now().Add(sixHour).Format("20060102150405")
+
+				CacheRecord = data.SiteData
+
+				break
+			}
 
 			if CacheRecordLock {
 
@@ -208,8 +255,6 @@ func index(c echo.Context) error {
 			}
 
 			CacheRecordLock = true
-
-			var data SiteResponse
 
 			if err := InvokeApi(&data); err != nil {
 
