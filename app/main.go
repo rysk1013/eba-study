@@ -24,6 +24,7 @@ import (
  * 処理がまとまりすぎているので後でリファクタ.
  */
 
+var Environment string
 var BaseUrl string
 var RetryLimitThreshold int
 var IsUseDummyAccount bool
@@ -40,6 +41,7 @@ type DisplayClassData struct {
 
 func init() {
 
+	Environment, _ = os.LookupEnv("GOLANG_ENVIRONMENT")
 	BaseUrl, _ = os.LookupEnv("GOLANG_BACKEND_BASE_URL")
 	account_data_retry_limit_threshold, _ := os.LookupEnv("GOLANG_ACCOUNT_DATA_RETRY_LIMIT_THRESHOLD")
 
@@ -100,13 +102,29 @@ func main() {
 
 	initRouting(e)
 
-	go func() {
-		if err := e.Start(":1323"); err != nil {
+	if Environment == "dev" {
+		/*
+		 * watchexecでホットリロードを設定する場合、goroutineでは動かない.
+		 */
+		func() {
+			if err := e.Start(":1323"); err != nil {
 
-			e.Logger.Info(err)
-			e.Logger.Info("shutting down the server.")
-		}
-	}()
+				e.Logger.Info(err)
+				e.Logger.Info("shutting down the server.")
+			}
+		}()
+	} else {
+		/*
+		 * 並行実行.
+		 */
+		go func() {
+			if err := e.Start(":1323"); err != nil {
+
+				e.Logger.Info(err)
+				e.Logger.Info("shutting down the server.")
+			}
+		}()
+	}
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
