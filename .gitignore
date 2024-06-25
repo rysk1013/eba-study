@@ -3,6 +3,3 @@ nginx/*.log
 
 # temp folder
 temp/
-
-# dummy accounts data
-app/dummy_accounts.json
