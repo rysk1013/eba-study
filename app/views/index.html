@@ -6,85 +6,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name=”robots” content=”noindex , nofollow”>
-        <link rel="icon" href="static/img/favicon.ico">
+        <link rel="icon" href="/static/img/favicon.ico">
+        <link rel="stylesheet" href="/static/style/style.css">
         <title>{{ .Title }}</title>
-        <style>
-            /* @TODO リファクタ */
-            /* @TODO レスポンシブ */
-            @font-face {
-                font-family: 'icon-mastache';
-                src: url('static/font/icon-mastache.eot?ha4iqi');
-                src: url('static/font/icon-mastache.eot?ha4iqi#iefix') format('embedded-opentype'),
-                     url('static/font/icon-mastache.ttf?ha4iqi') format('truetype'),
-                     url('static/font/icon-mastache.woff?ha4iqi') format('woff'),
-                     url('static/font/icon-mastache.svg?ha4iqi#icon-mastache') format('svg');
-                font-weight: normal;
-                font-style: normal;
-                font-display: block;
-            }
-            .icon-mastache {
-                font-family: 'icon-mastache' !important;
-                left: 0;
-                top: -0.8rem;
-                position: absolute;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-            }
-            .icon-mastache:before {
-                content: "\e900";
-                color: #FFF;
-                display: none;
-                font-size: 1.4em;
-            }
-            .icon-mastache.first:before {
-                color: #FFD700;
-                display: block;
-            }
-            .icon-mastache.second:before {
-                color: #C0C0C0;
-                display: block;
-            }
-            @font-face {
-                font-family: "Chalk-JP";
-                src: url("static/font/Chalk-JP.otf");
-            }
-            html {
-                font-family: "Chalk-JP";
-                font-size: 62.5%;
-                color: white;
-            }
-            body {
-                background-image: url("static/img/school-blackboard.jpg");
-                background-position: center;
-                background-size: cover;
-                background-repeat: no-repeat;
-                min-height: 100vh;
-                margin: 0;
-            }
-            .wrapper {
-                font-size: 3.0rem;
-                line-height: 1.6;
-                display: flex;
-                flex-direction: column;
-                padding-bottom: 8rem;
-            }
-            .content {
-                margin: 0 calc(100vw / 5);
-            }
-            .content-header {
-                width: calc(100vw - 8em);
-                margin: 2em auto;
-            }
-            .container {
-                display: flex;
-                flex-flow: wrap;
-            }
-            .container-block {
-                flex-basis: calc( 100% / 3 - 1.8em );
-                padding-left: 1.8em;
-                position: relative;
-            }
-        </style>
     </head>
     <body>
         <main class="wrapper">
