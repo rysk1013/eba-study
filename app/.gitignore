@@ -22,3 +22,7 @@ go.work
 
 # log file
 !log/*.log
+log/
+
+# dummy accounts data
+dummy_accounts.json

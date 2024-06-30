@@ -10,6 +10,7 @@ services:
     tty: true
     ports:
       - 1323
+    env_file: .docker/.env
 
   web:
     container_name: nginx
@@ -17,7 +18,8 @@ services:
       context: ./.docker
       dockerfile: ./web/Dockerfile.dev
     volumes:
-      - ./.docker/web/nginx.conf:/etc/nginx/nginx.conf
+      - ./.docker/web/nginx.conf.dev:/etc/nginx/nginx.conf
+      - ./.docker/web/define_params:/etc/nginx/define_params
       - ./nginx:/var/log/nginx
     ports:
       - 80:80
@@ -31,4 +33,4 @@ services:
       - '3443:443'
     environment:
       STAGE: local
-      DOMAINS: 'localhost -> http://host.docker.internal:80'
+      DOMAINS: 'localhost -> http://web:80'
